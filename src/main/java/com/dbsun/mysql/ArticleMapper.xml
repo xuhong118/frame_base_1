@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dbsun.mapper.ArticleMapper">
+    <!--测试-->
+
+    <sql id="Base_Column_List">
+        t.XYCCTT001, 
+        t.XYCA001, 
+        t.XYC001, 
+        t.XYCCTT002, 
+        t.XYCCTT003, 
+        t.XYCCTT004_TP, 
+        t.XYCCTT005, 
+        t.XYCCTT006, 
+        t.XYCCTT007, 
+        t.XYCCTT008, 
+        t.XYCCTT009, 
+        t.XYCCTT010_TP, 
+        t.XYCCTT011, 
+        t.XYCCTT012, 
+        t.XYCCTT013, 
+        t.XYCCTT014, 
+        t.XYCCTT015, 
+        t.XYCCTT016, 
+        t.XYCCTT017, 
+        t.XYCCTT018_TM, 
+        t.XYCCTT019_TM, 
+        t.XYCCTT020, 
+        t.XYCCTT021, 
+        t.XYCCTT022, 
+        t.XYCCTT023, 
+        t.XYCCTT024, 
+        t.XYCCTT025, 
+        t.XYCCTT026, 
+        t.XYCCTT027, 
+        t.XYCCTT028, 
+        t.XYCCTT029_TP, 
+        t.XYCCTT030, 
+        t.XYCCTT031, 
+        t.XYCCTT032_TM, 
+        t.XYCCTT033_TM, 
+        t.XYCCTT034_TM, 
+        t.XYCCTT035, 
+        t.XYCCTT036, 
+        t.XYCCTT037, 
+        t.XYCCTT038, 
+        t.XYCCTT039_TP, 
+        t.XYCCTT040, 
+        t.XYCCTT041, 
+        t.XYCCTT042, 
+        t.XYCCTT043
+    </sql>
+
+    <select id="getArticleList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM app_article a
+        where 1 = 1
+
+    </select>
+
+
+    <select id="getOrder" resultType="Integer" useCache="false">
+                select IFNULL(count(f_id),0) from app_content where f_id=#{f_id,jdbcType=DECIMAL}
+         </select>
+    <select id="getArticleId" resultType="Integer" useCache="false">
+                select id from app_article
+         </select>
+
+    <select id="getList" parameterType="page" resultType="pd" useCache="false">
+                select * from app_article
+        </select>
+
+    <select id="getTitleList" parameterType="page" resultType="pd" useCache="false">
+                select * from app_article where title like concat('%',#{pd.title},'%');
+        </select>
+
+    <update id="updateById" parameterType="pd">
+        update app_article
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType = VARCHAR},
+            </if>
+            <if test="author != null">
+                author = #{author,jdbcType = VARCHAR},
+            </if>
+            <if test="tag != null">
+                tag = #{tag,jdbcType = VARCHAR},
+            </if>
+            <if test="headImg !=null">
+                headImg = #{headImg,jdbcType = VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=DECIMAL}
+    </update>
+
+
+    <select id="findPd" resultType="pd">
+                select a.*,c.* from app_article a join app_content c on a.id = c.f_id
+        </select>
+
+    <select id="findText" resultType="pd">
+                select c.* from app_article a join app_content c on a.id = c.f_id where title like concat('%',#{pd.title},'%');
+        </select>
+
+    <select id="findTt" resultType="pd">
+                select c.* from app_article a join app_content c on a.id = c.f_id
+        </select>
+
+    <delete id="deleteText" parameterType="pd">
+                delete from app_content where f_id = #{f_id,jdbcType=DECIMAL}
+        </delete>
+
+
+    <insert id="insertForeach" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into app_content
+        ( id,text,type_ti,f_id,a_order )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.text},
+            #{item.type_ti},
+            #{item.f_id},
+            #{item.a_order}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="addArticle" parameterType="pd">
+        insert into app_article(id,title,href,type,tag,author,headImg,datetime,click_num) VALUES(#{id},#{title},#{href},#{type},#{tag},#{author},#{headImg},#{datetime},0)
+    </insert>
+
+</mapper>
